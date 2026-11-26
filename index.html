@@ -5,430 +5,444 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Than — Roblox Scripting Developer</title>
   <meta name="description" content="Than — Roblox scripting developer, founder of ThanHub and LiyHub. #1 top script for Fisch, scripts for 50+ Roblox experiences." />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#090909" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #000;
-      --bg-1: #0a0a0a;
-      --bg-2: #121212;
-      --bg-3: #1c1c1c;
-      --line: #1f1f1f;
-      --fg: #fafafa;
-      --fg-2: #a3a3a3;
-      --fg-3: #6b6b6b;
-      --fg-4: #454545;
-      --mono: 'JetBrains Mono', ui-monospace, monospace;
-      --sans: 'Inter Tight', system-ui, -apple-system, sans-serif;
+      --bg: #090909;
+      --fg: #f1efe8;
+      --mut: #8e8b82;
+      --dim: #4f4c45;
+      --line: rgba(241,239,232,.13);
+      --line-2: rgba(241,239,232,.26);
+      --anton: 'Anton', 'Arial Narrow', sans-serif;
+      --sans: 'Archivo', system-ui, sans-serif;
+      --mono: 'Space Mono', ui-monospace, monospace;
     }
-    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-    body { font-family: var(--sans); background: var(--bg); color: var(--fg); min-height: 100vh; font-size: 15px; line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    html { -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--fg); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     ::selection { background: var(--fg); color: var(--bg); }
     a { color: inherit; text-decoration: none; }
     button { font-family: inherit; }
-    :focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+    svg { display: block; }
 
-    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
-    .mono { font-family: var(--mono); }
-    .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .02em; color: var(--fg-3); text-transform: lowercase; }
+    /* Lenis required */
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-stopped { overflow: hidden; }
 
-    /* ---------- nav ---------- */
-    .nav { position: sticky; top: 0; z-index: 50; background: rgba(0,0,0,.82); backdrop-filter: saturate(140%) blur(12px); -webkit-backdrop-filter: saturate(140%) blur(12px); }
-    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 66px; gap: 16px; }
-    .wordmark { display: flex; align-items: baseline; gap: 10px; }
-    .wordmark b { font-size: 20px; font-weight: 800; letter-spacing: -.04em; }
-    .wordmark span { font-family: var(--mono); font-size: 11px; color: var(--fg-3); }
-    .nav-links { display: flex; align-items: center; gap: 28px; }
-    .nav-links a { color: var(--fg-2); font-size: 14px; font-weight: 500; transition: color .15s; }
-    .nav-links a:hover { color: var(--fg); }
-    .nav-right { display: flex; align-items: center; gap: 14px; }
-    .menu-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: 0; padding: 8px 4px; cursor: pointer; }
-    .menu-toggle span { width: 22px; height: 2px; background: var(--fg); }
+    /* ambient background (fixed, parallaxes with scroll) */
+    #ambient { position: fixed; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(60% 50% at 50% 0%, rgba(255,255,255,.05), transparent 70%), #090909; }
+    #flare { position: fixed; inset: 0; z-index: -2; pointer-events: none; will-change: transform; }
+    #flare::before { content: ""; position: absolute; left: 50%; top: 42%; width: 120vw; height: 60vh; transform: translate(-50%,-50%) rotate(-18deg); background: radial-gradient(45% 50% at 50% 50%, rgba(255,255,255,.10), rgba(255,255,255,.03) 45%, transparent 72%); filter: blur(10px); }
+    #grain { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .05; background-image: radial-gradient(rgba(255,255,255,.9) .5px, transparent .5px); background-size: 3px 3px; }
+    canvas#dust { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 
-    /* ---------- buttons ---------- */
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 44px; padding: 0 22px; border-radius: 999px; font-size: 14.5px; font-weight: 600; cursor: pointer; border: 0; white-space: nowrap; transition: background .15s, color .15s; }
-    .btn-solid { background: var(--fg); color: var(--bg); }
-    .btn-solid:hover { background: #d9d9d9; }
-    .btn-ghost { background: var(--bg-2); color: var(--fg); }
-    .btn-ghost:hover { background: var(--bg-3); }
-    .btn .arr { transition: transform .15s; }
-    .btn:hover .arr { transform: translateX(3px); }
-    .btn-sm { height: 36px; padding: 0 16px; font-size: 13px; }
-    .nav .btn { height: 38px; padding: 0 18px; font-size: 13.5px; }
+    /* scroll progress */
+    #progress { position: fixed; top: 0; left: 0; height: 2px; width: 0; background: var(--fg); z-index: 200; }
 
-    /* ---------- hero ---------- */
-    .hero { padding: 92px 0 72px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 56px; align-items: end; }
-    .hero .eyebrow { display: block; margin-bottom: 26px; }
-    .hero h1 { font-size: clamp(56px, 10vw, 128px); line-height: .9; letter-spacing: -.055em; font-weight: 800; }
-    .hero h1 .dim { color: var(--fg-4); }
-    .hero-side p { color: var(--fg-2); font-size: 16px; line-height: 1.6; max-width: 380px; margin-bottom: 26px; }
-    .hero-side p strong { color: var(--fg); font-weight: 600; }
-    .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .sec-intro { color: var(--fg-2); font-size: 16px; line-height: 1.65; max-width: 66ch; margin: -18px 0 38px; }
+    /* nav */
+    .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; transition: background .28s ease, backdrop-filter .28s ease, box-shadow .28s ease; }
+    .nav.scrolled { background: rgba(9,9,9,.74); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); box-shadow: 0 1px 0 var(--line); }
+    .nav-in { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 22px 28px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-family: var(--anton); font-size: 22px; letter-spacing: .04em; }
+    .brand .sq { width: 11px; height: 11px; background: var(--fg); }
+    .nav-right { display: flex; align-items: center; gap: 6px; }
+    .nav-right a { font-family: var(--mono); font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--mut); padding: 9px 13px; border-radius: 999px; transition: color .2s, background .2s; }
+    .nav-right a:hover { color: var(--fg); background: rgba(255,255,255,.06); }
+    .nav-right a.disc { color: var(--bg); background: var(--fg); }
+    .nav-right a.disc:hover { background: #fff; color: var(--bg); }
+    .burger { display: none; width: 42px; height: 42px; border-radius: 999px; background: rgba(255,255,255,.07); border: 0; cursor: pointer; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+    .burger span { width: 16px; height: 2px; background: var(--fg); }
 
-    /* code strip (clean, flat) */
-    .codeline { display: flex; align-items: center; gap: 14px; background: var(--bg-1); border-radius: 14px; padding: 10px 10px 10px 20px; margin-bottom: 110px; }
-    .codeline code { flex: 1; min-width: 0; font-family: var(--mono); font-size: 13px; color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .codeline code b { color: var(--fg); font-weight: 500; }
-    .codeline .btn { height: 38px; font-size: 13px; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
 
-    /* ---------- sections ---------- */
-    .section { padding-bottom: 110px; }
-    .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 34px; flex-wrap: wrap; }
-    .sec-head h2 { font-size: clamp(30px, 4.4vw, 50px); font-weight: 700; letter-spacing: -.045em; line-height: 1; }
+    /* hero — centered, cinematic */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 28px 80px; }
+    .hero .kick { font-family: var(--mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--mut); margin-bottom: 26px; }
+    .hero h1 { font-family: var(--anton); font-weight: 400; font-size: clamp(88px, 23vw, 340px); line-height: .82; letter-spacing: .01em; text-transform: uppercase; }
+    .hero .tagline { font-family: var(--anton); font-weight: 400; font-size: clamp(22px, 4.6vw, 52px); letter-spacing: .14em; text-transform: uppercase; color: var(--fg); margin-top: 10px; }
+    .hero .sub { color: #c6c3ba; font-size: 17px; max-width: 54ch; margin: 28px auto 0; line-height: 1.6; }
+    .hero .sub b { color: var(--fg); font-weight: 600; }
+    .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 34px; }
+    .btn { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; padding: 15px 28px; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; color: var(--fg); cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: background .18s, color .18s, border-color .18s, transform .1s; }
+    .btn:active { transform: translateY(1px); }
+    .btn.solid { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+    .btn:hover { background: rgba(255,255,255,.08); }
+    .btn.solid:hover { background: #fff; }
+    .scrollcue { margin-top: 70px; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mut); display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .scrollcue .ln { width: 1px; height: 40px; background: linear-gradient(var(--mut), transparent); animation: drop 1.8s ease-in-out infinite; }
+    @keyframes drop { 0% { transform: scaleY(0); transform-origin: top; } 45% { transform: scaleY(1); transform-origin: top; } 55% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
 
-    /* feature (fisch) */
-    .feature { background: var(--bg-1); border-radius: 18px; padding: 34px 36px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; margin-bottom: 20px; }
-    .feature .kicker { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-3); margin-bottom: 12px; }
-    .feature h3 { font-size: clamp(22px, 2.6vw, 30px); font-weight: 700; letter-spacing: -.03em; line-height: 1.08; margin-bottom: 12px; }
-    .feature p { color: var(--fg-2); max-width: 60ch; margin-bottom: 18px; }
-    .feat-list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px; color: var(--fg-2); }
-    .feat-list li { display: flex; align-items: center; gap: 9px; }
-    .feat-list li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--fg); }
-    .rank { text-align: right; }
-    .rank b { display: block; font-size: clamp(64px, 9vw, 108px); font-weight: 800; letter-spacing: -.06em; line-height: .82; }
-    .rank span { color: var(--fg-3); font-size: 13px; }
+    /* sections */
+    .section { padding-top: 110px; padding-bottom: 110px; scroll-margin-top: 80px; }
+    .sec-head { display: flex; align-items: baseline; gap: 18px; margin-bottom: 44px; }
+    .sec-head .no { font-family: var(--mono); font-size: 12px; color: var(--mut); letter-spacing: .1em; }
+    .sec-head h2 { font-family: var(--anton); font-weight: 400; font-size: clamp(44px, 9vw, 128px); text-transform: uppercase; line-height: .86; letter-spacing: .01em; }
+    .lead { font-size: clamp(18px, 2.4vw, 26px); line-height: 1.5; color: #d6d3ca; max-width: 24ch; font-weight: 500; }
+    .lead.wide { max-width: 40ch; }
 
-    /* panels */
-    .panels { display: grid; grid-template-columns: 1fr 1.35fr; gap: 20px; align-items: start; }
-    .panel { background: var(--bg-1); border-radius: 18px; overflow: hidden; }
-    .panel-head { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 22px; font-weight: 600; font-size: 15px; box-shadow: inset 0 -1px 0 var(--line); }
-    .panel-head span { color: var(--fg-3); font-weight: 400; font-family: var(--mono); font-size: 12px; }
-    .prop-group { padding: 12px 22px 4px; font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--fg-3); text-transform: uppercase; letter-spacing: .1em; }
-    .prop { display: grid; grid-template-columns: 1fr 1fr; padding: 11px 22px; box-shadow: inset 0 -1px 0 var(--line); font-size: 14px; }
-    .prop:last-child { box-shadow: none; }
-    .prop dt { color: var(--fg-3); }
-    .prop dd { font-weight: 600; font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 14px; }
-    .skills .prop { grid-template-columns: 1.1fr 1fr; }
-    .meter { flex: 1; height: 5px; border-radius: 999px; background: var(--bg-3); overflow: hidden; }
-    .meter i { display: block; height: 100%; width: var(--v); background: var(--fg); border-radius: 999px; }
-    .prop dd .val { min-width: 3ch; text-align: right; }
+    /* journey */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .about-grid .lead { max-width: none; font-size: clamp(20px, 2.6vw, 30px); }
+    .about-right p { color: var(--mut); font-size: 16px; line-height: 1.7; }
+    .ach { margin-top: 64px; border-top: 1px solid var(--line-2); display: grid; grid-template-columns: 1fr auto; gap: 40px; padding-top: 40px; align-items: center; }
+    .ach h3 { font-family: var(--sans); font-weight: 700; font-size: clamp(22px, 3vw, 34px); letter-spacing: -.01em; margin-bottom: 14px; }
+    .ach p { color: var(--mut); max-width: 54ch; margin-bottom: 18px; }
+    .tick { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 24px; font-family: var(--mono); font-size: 12.5px; color: #bdbab1; }
+    .tick li::before { content: "+ "; color: var(--mut); }
+    .ach-rank { text-align: right; }
+    .ach-rank b { font-family: var(--anton); font-weight: 400; font-size: clamp(90px, 13vw, 170px); line-height: .76; }
+    .ach-rank span { display: block; font-family: var(--mono); font-size: 11px; color: var(--mut); text-transform: uppercase; letter-spacing: .06em; margin-top: 10px; }
+    .skills { margin-top: 56px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px 40px; }
+    .skill { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid var(--line); }
+    .skill dt { color: var(--mut); font-size: 14px; }
+    .skill .seg { display: flex; gap: 3px; }
+    .skill .seg i { width: 8px; height: 14px; background: var(--dim); }
+    .skill .seg i.on { background: var(--fg); }
 
-    /* experience */
-    .exp-block + .exp-block { margin-top: 36px; }
-    .exp-label { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); margin-bottom: 16px; }
-    .exp-label b { color: var(--fg-2); font-weight: 500; }
-    .exp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .exp-card { background: var(--bg-1); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 16px; transition: background .15s; }
-    .exp-card:hover { background: var(--bg-2); }
-    .exp-card.lead { grid-column: span 2; }
-    .exp-card.past { opacity: .58; }
-    .exp-card.past:hover { opacity: 1; }
-    .hub-head { display: flex; align-items: center; gap: 14px; }
-    .hub-logo { width: 46px; height: 46px; border-radius: 12px; background: var(--bg-3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .hub-logo svg { width: 62%; height: 62%; }
-    .hub-name { font-size: 18px; font-weight: 700; letter-spacing: -.02em; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; line-height: 1.15; }
-    .hub-role { color: var(--fg-3); font-size: 13px; font-family: var(--mono); margin-top: 3px; }
-    .exp-desc { color: var(--fg-2); font-size: 14.5px; line-height: 1.6; }
-
-    .status { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; font-weight: 600; }
-    .status.live { background: var(--fg); color: var(--bg); display: inline-flex; align-items: center; gap: 5px; }
-    .status.live .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--bg); animation: pulse 1.8s infinite; }
-    .status.off { box-shadow: inset 0 0 0 1px var(--bg-3); color: var(--fg-3); }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+    /* experience rows */
+    .xrow { display: grid; grid-template-columns: 64px 280px 1fr; gap: 28px; align-items: start; padding: 32px 0; border-top: 1px solid var(--line); }
+    .xrow:first-of-type { border-top: 1px solid var(--line-2); }
+    .xlabel { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--mut); margin: 28px 0 4px; }
+    .xlogo { width: 58px; height: 58px; border: 1px solid var(--line-2); display: flex; align-items: center; justify-content: center; }
+    .xlogo svg { width: 56%; height: 56%; }
+    .xname { font-family: var(--sans); font-weight: 700; font-size: 22px; letter-spacing: -.01em; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .xrole { font-family: var(--mono); font-size: 11.5px; color: var(--mut); text-transform: uppercase; letter-spacing: .05em; margin-top: 10px; }
+    .xdesc { color: #bdbab1; font-size: 15px; line-height: 1.65; }
+    .xrow.past { opacity: .48; }
+    .xrow.past:hover { opacity: 1; transition: opacity .3s; }
+    .tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; }
+    .tag.on { color: var(--bg); background: var(--fg); padding: 3px 9px; border-radius: 999px; }
+    .tag.off { color: var(--mut); border: 1px solid var(--line-2); padding: 2px 8px; border-radius: 999px; }
 
     /* projects */
-    .proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .proj { background: var(--bg-1); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; transition: background .15s; }
-    .proj:hover { background: var(--bg-2); }
-    .proj.wide { grid-column: span 2; }
-    .proj-art { position: relative; aspect-ratio: 16/7; overflow: hidden; }
-    .proj.wide .proj-art { aspect-ratio: 20/7; }
-    .proj-art svg { width: 100%; height: 100%; display: block; }
-    .proj-badge { position: absolute; left: 16px; top: 16px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--fg); padding: 4px 10px; border-radius: 999px; font-weight: 600; }
-    .proj-body { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-    .proj-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
-    .proj h3 { font-size: 22px; font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
-    .proj p { color: var(--fg-2); font-size: 14.5px; line-height: 1.6; }
-    .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
-    .tag { font-family: var(--mono); font-size: 11.5px; color: var(--fg-2); background: var(--bg-3); padding: 4px 10px; border-radius: 999px; }
+    .pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .pcell { display: flex; flex-direction: column; }
+    .pcell.wide { grid-column: span 2; }
+    .part { position: relative; aspect-ratio: 20/7; background: #060606; overflow: hidden; border: 1px solid var(--line); }
+    .pcell:not(.wide) .part { aspect-ratio: 16/8; }
+    .pbadge { position: absolute; left: 14px; top: 14px; font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--bg); background: var(--fg); padding: 4px 10px; border-radius: 999px; }
+    .pbody { padding: 22px 4px 0; display: flex; flex-direction: column; gap: 10px; }
+    .pk { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--mut); }
+    .pbody h3 { font-family: var(--sans); font-weight: 700; font-size: 24px; letter-spacing: -.01em; }
+    .pbody p { color: var(--mut); font-size: 15px; line-height: 1.6; max-width: 62ch; }
+    .ptags { display: flex; flex-wrap: wrap; font-family: var(--mono); font-size: 11px; color: var(--mut); margin-top: 4px; }
+    .ptags span::after { content: "  /  "; color: var(--dim); }
+    .ptags span:last-child::after { content: ""; }
 
     /* contact */
-    .contact { background: var(--bg-1); border-radius: 18px; padding: 44px; display: grid; grid-template-columns: 1fr auto; gap: 28px; align-items: end; }
-    .contact h2 { font-size: clamp(28px, 4vw, 44px); font-weight: 700; letter-spacing: -.045em; line-height: 1; margin-bottom: 12px; }
-    .contact p { color: var(--fg-2); max-width: 46ch; }
+    .contact { text-align: center; padding: 40px 0 10px; }
+    .contact h2 { font-family: var(--anton); font-weight: 400; font-size: clamp(56px, 13vw, 200px); text-transform: uppercase; line-height: .82; }
+    .contact p { color: var(--mut); font-size: 18px; max-width: 48ch; margin: 24px auto 34px; }
 
-    footer { padding: 30px 0 48px; box-shadow: inset 0 1px 0 var(--line); }
-    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--fg-3); font-size: 13px; }
-    footer a:hover { color: var(--fg); }
+    footer { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--mut); }
+    footer .f-in { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 26px 28px; border-top: 1px solid var(--line); }
 
-    .toast { position: fixed; bottom: 22px; left: 50%; z-index: 99; padding: 11px 18px; border-radius: 999px; background: var(--fg); color: var(--bg); font-size: 13px; font-weight: 600; opacity: 0; transform: translate(-50%, 12px); pointer-events: none; transition: opacity .2s, transform .2s; }
+    /* reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s cubic-bezier(.22,.8,.2,1), transform .8s cubic-bezier(.22,.8,.2,1); }
+    .reveal.in { opacity: 1; transform: none; }
+
+    .toast { position: fixed; bottom: 22px; left: 50%; z-index: 150; padding: 13px 20px; border-radius: 999px; background: var(--fg); color: var(--bg); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; opacity: 0; transform: translate(-50%, 10px); pointer-events: none; transition: opacity .2s, transform .2s; }
     .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-    /* responsive */
-    @media (max-width: 920px) {
-      .hero { grid-template-columns: 1fr; gap: 28px; align-items: start; padding: 64px 0 48px; }
-      .panels, .proj-grid { grid-template-columns: 1fr; }
-      .exp-grid { grid-template-columns: 1fr 1fr; }
-      .exp-card.lead, .proj.wide { grid-column: span 2; }
+    @media (max-width: 860px) {
+      .nav-in { padding: 16px 20px; }
+      .wrap { padding: 0 22px; }
+      .hero { padding: 116px 22px 72px; }
+      .section { padding-top: 76px; padding-bottom: 76px; }
+      .sec-head h2, .hero h1, .hero .tagline, .contact h2 { overflow-wrap: anywhere; }
+      footer .f-in { padding: 24px 22px; }
+      .nav-right a:not(.disc) { display: none; }
+      .burger { display: flex; }
+      .nav.open .nav-menu { display: flex; }
+      .nav-menu { display: none; position: fixed; top: 74px; left: 16px; right: 16px; flex-direction: column; gap: 2px; padding: 12px; background: rgba(16,16,16,.96); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--line-2); border-radius: 18px; z-index: 100; }
+      .nav.open .nav-menu a { display: block; font-family: var(--mono); font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--mut); padding: 14px 16px; border-radius: 10px; }
+      .nav.open .nav-menu a:hover, .nav.open .nav-menu a:active { color: var(--fg); background: rgba(255,255,255,.06); }
+      .about-grid { grid-template-columns: 1fr; gap: 28px; }
+      .ach { grid-template-columns: 1fr; gap: 24px; }
+      .ach-rank { text-align: left; }
+      .skills { grid-template-columns: 1fr; gap: 0; }
+      .xrow { grid-template-columns: 48px 1fr; gap: 14px 16px; }
+      .xlogo { width: 48px; height: 48px; }
+      .xdesc { grid-column: 1 / -1; }
+      .pgrid { grid-template-columns: 1fr; }
+      .pcell.wide { grid-column: auto; }
     }
-    @media (max-width: 620px) {
-      .wrap { padding: 0 16px; }
-      .nav-links { display: none; position: absolute; top: 66px; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px 16px; background: var(--bg); box-shadow: inset 0 -1px 0 var(--line); }
-      .nav-links.active { display: flex; }
-      .menu-toggle { display: flex; }
-      .nav-right .btn { display: none; }
-      .feature { grid-template-columns: 1fr; padding: 24px; gap: 20px; }
-      .rank { text-align: left; }
-      .exp-grid { grid-template-columns: 1fr; }
-      .exp-card.lead, .proj.wide { grid-column: auto; }
-      .contact { grid-template-columns: 1fr; padding: 28px; align-items: start; }
-      .hero-actions > * { flex: 1 1 100%; }
-      .codeline { margin-bottom: 80px; }
-      .codeline .label { display: none; }
-      .section { padding-bottom: 80px; }
-    }
-    @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+    @media (max-width: 520px) { .hero-actions { flex-direction: column; width: 100%; } .btn { justify-content: center; } }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } #flare, .scrollcue .ln { animation: none; } }
   </style>
 </head>
 <body>
+  <div id="ambient"></div>
+  <div id="flare"></div>
+  <canvas id="dust"></canvas>
+  <div id="grain"></div>
+  <div id="progress"></div>
 
-  <header class="nav">
-    <div class="wrap nav-inner">
-      <a href="#" class="wordmark"><b>Than</b><span>roblox · luau</span></a>
-      <nav class="nav-links" id="navLinks">
-        <a href="#about" onclick="closeMenu()">About</a>
-        <a href="#experience" onclick="closeMenu()">Experience</a>
-        <a href="#projects" onclick="closeMenu()">Projects</a>
-        <a href="#contact" onclick="closeMenu()">Contact</a>
-      </nav>
+  <header class="nav" id="nav">
+    <div class="nav-in">
+      <a href="#top" class="brand" data-link><span class="sq"></span>THAN</a>
       <div class="nav-right">
-        <button class="btn btn-ghost btn-sm mono" data-copy onclick="copyDiscord()"><span class="copy-label" data-default="@thanzxz">@thanzxz</span></button>
-        <button class="menu-toggle" id="menuToggle" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
+        <nav class="nav-menu" id="menu">
+          <a href="#about" data-link onclick="closeMenu()">About</a>
+          <a href="#experience" data-link onclick="closeMenu()">Experience</a>
+          <a href="#projects" data-link onclick="closeMenu()">Projects</a>
+          <a href="#contact" data-link onclick="closeMenu()">Contact</a>
+        </nav>
+        <a href="javascript:void(0)" class="disc" data-copy onclick="copyDiscord()"><span class="copy-label" data-default="@thanzxz">@thanzxz</span></a>
+        <button class="burger" id="burger" onclick="toggleMenu()" aria-label="Menu"><span></span><span></span></button>
       </div>
     </div>
   </header>
 
-  <main class="wrap">
+  <main id="top">
 
-    <!-- Hero -->
-    <section class="hero" id="hero">
-      <div>
-        <span class="eyebrow">roblox scripting developer</span>
-        <h1>Than.<br><span class="dim">Scripts that</span><br>just work.</h1>
+    <!-- hero -->
+    <section class="hero">
+      <div class="kick reveal">Roblox scripting developer</div>
+      <h1 class="reveal">Than</h1>
+      <div class="tagline reveal">Scripts that just work</div>
+      <p class="sub reveal">Full-time Roblox scripting developer, founder of <b>ThanHub</b> and <b>LiyHub</b>. I built the <b>#1 top script for Fisch</b> and have shipped fast, stable scripts for 50+ Roblox experiences.</p>
+      <div class="hero-actions reveal">
+        <a href="#experience" class="btn solid" data-link>View experience →</a>
+        <a href="#projects" class="btn" data-link>See projects</a>
       </div>
-      <div class="hero-side">
-        <p>Full-time Roblox scripting developer, founder of ThanHub and LiyHub. I built the <strong>#1 top script for Fisch</strong> and have shipped fast, stable scripts for 50+ Roblox experiences.</p>
-        <div class="hero-actions">
-          <a href="#experience" class="btn btn-solid">View experience <span class="arr">→</span></a>
-          <a href="#projects" class="btn btn-ghost">See projects</a>
-        </div>
-      </div>
+      <div class="scrollcue reveal" aria-hidden="true">Scroll<span class="ln"></span></div>
     </section>
 
-    <!-- About -->
-    <section id="about" class="section">
-      <div class="sec-head"><h2>Journey &amp; achievement</h2><span class="eyebrow">01 — about</span></div>
-      <p class="sec-intro">I'm a full-time Roblox scripting developer. I started out writing small automation scripts and grew into founding my own hubs — ThanHub and LiyHub — and shipping flagship scripts used across 50+ Roblox games. My focus never changes: fast, stable, easy-to-use scripts that keep running smoothly after every game update.</p>
+    <!-- about -->
+    <section class="section wrap" id="about">
+      <div class="sec-head reveal"><span class="no">01</span><h2>Journey<br>&amp; achievement</h2></div>
+      <div class="about-grid">
+        <p class="lead reveal">From small automation scripts to founding my own hubs.</p>
+        <div class="about-right reveal">
+          <p>I'm a full-time Roblox scripting developer. I started out writing small automation scripts and grew into founding my own hubs — ThanHub and LiyHub — and shipping flagship scripts used across 50+ Roblox games. My focus never changes: fast, stable, easy-to-use scripts that keep running smoothly after every game update.</p>
+        </div>
+      </div>
 
-      <article class="feature">
+      <div class="ach reveal">
         <div>
           <h3>Best top script in Roblox Fisch</h3>
           <p>Recognized for creating the top-performing script for Fisch. Designed to be easy to use and run smoothly.</p>
-          <ul class="feat-list">
+          <ul class="tick">
             <li>Lag-free execution</li>
             <li>Easy to use</li>
             <li>Fast &amp; smooth after 24h</li>
             <li>Syncs with game updates</li>
           </ul>
         </div>
-        <div class="rank"><b>#1</b><span>Peak community rating</span></div>
-      </article>
+        <div class="ach-rank"><b>#1</b><span>Peak community rating</span></div>
+      </div>
 
-      <div class="panels">
-        <div class="panel">
-          <div class="panel-head">Profile <span>Than</span></div>
-          <div class="prop-group">Data</div>
-          <div class="prop"><dt>Games scripted</dt><dd>50+</dd></div>
-          <div class="prop"><dt>Active hubs</dt><dd>4</dd></div>
-          <div class="prop"><dt>Discord</dt><dd>@thanzxz</dd></div>
-        </div>
-        <div class="panel skills">
-          <div class="panel-head">Skills <span>self-rated</span></div>
-          <div class="prop-group">Roblox</div>
-          <div class="prop"><dt>Lua / Luau scripting</dt><dd><span class="meter" style="--v:100%"><i></i></span><span class="val">100</span></dd></div>
-          <div class="prop"><dt>Anti-cheat bypass</dt><dd><span class="meter" style="--v:98%"><i></i></span><span class="val">98</span></dd></div>
-          <div class="prop"><dt>Memory / framework opt.</dt><dd><span class="meter" style="--v:95%"><i></i></span><span class="val">95</span></dd></div>
-          <div class="prop-group">Web</div>
-          <div class="prop"><dt>JavaScript</dt><dd><span class="meter" style="--v:90%"><i></i></span><span class="val">90</span></dd></div>
-          <div class="prop"><dt>CSS / UI</dt><dd><span class="meter" style="--v:85%"><i></i></span><span class="val">85</span></dd></div>
-          <div class="prop"><dt>HTML / responsive</dt><dd><span class="meter" style="--v:70%"><i></i></span><span class="val">70</span></dd></div>
-        </div>
+      <div class="skills">
+        <div class="skill reveal"><dt>Lua / Luau</dt><span class="seg" data-v="10"></span></div>
+        <div class="skill reveal"><dt>Anti-cheat bypass</dt><span class="seg" data-v="10"></span></div>
+        <div class="skill reveal"><dt>Framework opt.</dt><span class="seg" data-v="9"></span></div>
+        <div class="skill reveal"><dt>JavaScript</dt><span class="seg" data-v="9"></span></div>
+        <div class="skill reveal"><dt>CSS / UI</dt><span class="seg" data-v="8"></span></div>
+        <div class="skill reveal"><dt>HTML / responsive</dt><span class="seg" data-v="7"></span></div>
       </div>
     </section>
 
-    <!-- Experience -->
-    <section id="experience" class="section">
-      <div class="sec-head"><h2>Hubs &amp; roles</h2><span class="eyebrow">02 — experience</span></div>
+    <!-- experience -->
+    <section class="section wrap" id="experience">
+      <div class="sec-head reveal"><span class="no">02</span><h2>Hubs<br>&amp; roles</h2></div>
 
-      <div class="exp-block">
-        <div class="exp-label">Active now <b>· 4 hubs</b></div>
-        <div class="exp-grid">
-          <article class="exp-card lead">
-            <div class="hub-head">
-              <div class="hub-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="13" fill="#fafafa"/><ellipse cx="32" cy="32" rx="26" ry="8" transform="rotate(-28 32 32)" fill="none" stroke="#fafafa" stroke-width="3.5"/></svg></div>
-              <div><div class="hub-name">ThanHub <span class="status live"><span class="dot"></span>Active</span></div><div class="hub-role">Founder &amp; lead developer</div></div>
-            </div>
-            <p class="exp-desc">Founded and lead the whole ThanHub ecosystem: core script loaders, anti-cheat bypasses, and flagship scripts including the #1 Fisch script. This is where my newest work ships first.</p>
-          </article>
-
-          <article class="exp-card">
-            <div class="hub-head">
-              <div class="hub-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 44 L32 14 L52 44 Z" fill="none" stroke="#fafafa" stroke-width="3.5"/><path d="M8 40 Q32 24 56 32" stroke="#6b6b6b" stroke-width="3" fill="none"/></svg></div>
-              <div><div class="hub-name">AxonHub <span class="status live"><span class="dot"></span>Active</span></div><div class="hub-role">Developer</div></div>
-            </div>
-            <p class="exp-desc">Core game features, faster script execution, and dependable system routines. Active on the latest releases.</p>
-          </article>
-
-          <article class="exp-card lead">
-            <div class="hub-head">
-              <div class="hub-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="25" cy="25" r="10" fill="none" stroke="#fafafa" stroke-width="3.5"/><path d="M32 32 L50 50" stroke="#fafafa" stroke-width="3.5" stroke-linecap="round"/><path d="M44 44 l6 -6 M50 50 l5 -5" stroke="#fafafa" stroke-width="3.5" stroke-linecap="round"/></svg></div>
-              <div><div class="hub-name">LiyHub <span class="status live"><span class="dot"></span>Active</span></div><div class="hub-role">Founder, owner &amp; developer</div></div>
-            </div>
-            <p class="exp-desc">Founder, owner and developer of LiyHub — a full Roblox script hub I built end to end: opaque loader links, HWID-locked keys, encrypted delivery, and a QRIS store with automatic key fulfilment.</p>
-          </article>
-
-          <article class="exp-card">
-            <div class="hub-head">
-              <div class="hub-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 42 L24 20 L32 33 L40 18 L52 42" fill="none" stroke="#fafafa" stroke-width="3.5" stroke-linejoin="round"/></svg></div>
-              <div><div class="hub-name">SnowyHub <span class="status live"><span class="dot"></span>Active</span></div><div class="hub-role">Contributor</div></div>
-            </div>
-            <p class="exp-desc">New game integrations for the script library, quick bug fixes, and stability patches. Currently active.</p>
-          </article>
-        </div>
+      <div class="xlabel reveal">Active now / 4 hubs</div>
+      <div class="xrow reveal">
+        <div class="xlogo"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="32" cy="32" r="12" fill="currentColor" stroke="none"/><ellipse cx="32" cy="32" rx="26" ry="8" transform="rotate(-28 32 32)" stroke-width="3.5"/></svg></div>
+        <div><div class="xname">ThanHub <span class="tag on">Active</span></div><div class="xrole">Founder &amp; lead developer</div></div>
+        <p class="xdesc">Founded and lead the whole ThanHub ecosystem: core script loaders, anti-cheat bypasses, and flagship scripts including the #1 Fisch script. My newest work ships here first.</p>
+      </div>
+      <div class="xrow reveal">
+        <div class="xlogo"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="25" cy="25" r="9" stroke-width="3.5"/><path d="M32 32 L50 50" stroke-width="3.5" stroke-linecap="round"/><path d="M44 44 l6 -6 M50 50 l5 -5" stroke-width="3.5" stroke-linecap="round"/></svg></div>
+        <div><div class="xname">LiyHub <span class="tag on">Active</span></div><div class="xrole">Founder, owner &amp; developer</div></div>
+        <p class="xdesc">A full Roblox script hub I built end to end: opaque loader links, HWID-locked keys, encrypted delivery, and a QRIS store with automatic key fulfilment.</p>
+      </div>
+      <div class="xrow reveal">
+        <div class="xlogo"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><path d="M12 44 L32 14 L52 44 Z" stroke-width="3.5"/><path d="M8 40 Q32 24 56 32" stroke="currentColor" stroke-opacity=".5" stroke-width="3"/></svg></div>
+        <div><div class="xname">AxonHub <span class="tag on">Active</span></div><div class="xrole">Developer</div></div>
+        <p class="xdesc">Core game features, faster script execution, and dependable system routines. Active on the latest releases.</p>
+      </div>
+      <div class="xrow reveal">
+        <div class="xlogo"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><path d="M12 42 L24 20 L32 33 L40 18 L52 42" stroke-width="3.5" stroke-linejoin="round"/></svg></div>
+        <div><div class="xname">SnowyHub <span class="tag on">Active</span></div><div class="xrole">Contributor</div></div>
+        <p class="xdesc">New game integrations for the script library, quick bug fixes, and stability patches. Currently active.</p>
       </div>
 
-      <div class="exp-block">
-        <div class="exp-label">Previously <b>· past roles</b></div>
-        <div class="exp-grid">
-          <article class="exp-card past">
-            <div class="hub-head">
-              <div class="hub-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><ellipse cx="32" cy="32" rx="24" ry="9" transform="rotate(-35 32 32)" fill="none" stroke="#9a9aa2" stroke-width="2.5"/><ellipse cx="32" cy="32" rx="24" ry="9" transform="rotate(35 32 32)" fill="none" stroke="#9a9aa2" stroke-width="2.5"/></svg></div>
-              <div><div class="hub-name">RonixHub <span class="status off">Past</span></div><div class="hub-role">Full-time developer</div></div>
-            </div>
-            <p class="exp-desc">Core scripting mechanics, runtime optimization, and fast patches when supported games updated.</p>
-          </article>
-          <article class="exp-card past">
-            <div class="hub-head">
-              <div class="hub-logo"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M44 16 L26 34 L36 34 L20 52" stroke="#cfcfd6" stroke-width="3.5" fill="none"/></svg></div>
-              <div><div class="hub-name">H4xScripts <span class="status off">Past</span></div><div class="hub-role">Full-time developer</div></div>
-            </div>
-            <p class="exp-desc">Modular script frameworks, core backend systems, and scalable automation tools.</p>
-          </article>
-        </div>
+      <div class="xlabel reveal">Previously / past roles</div>
+      <div class="xrow past reveal">
+        <div class="xlogo"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><ellipse cx="32" cy="32" rx="24" ry="9" transform="rotate(-35 32 32)" stroke-width="2.5"/><ellipse cx="32" cy="32" rx="24" ry="9" transform="rotate(35 32 32)" stroke-width="2.5"/></svg></div>
+        <div><div class="xname">RonixHub <span class="tag off">Past</span></div><div class="xrole">Full-time developer</div></div>
+        <p class="xdesc">Core scripting mechanics, runtime optimization, and fast patches when supported games updated.</p>
+      </div>
+      <div class="xrow past reveal">
+        <div class="xlogo"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><path d="M44 16 L26 34 L36 34 L20 52" stroke-width="3.5"/></svg></div>
+        <div><div class="xname">H4xScripts <span class="tag off">Past</span></div><div class="xrole">Full-time developer</div></div>
+        <p class="xdesc">Modular script frameworks, core backend systems, and scalable automation tools.</p>
       </div>
     </section>
 
-    <!-- Projects -->
-    <section id="projects" class="section">
-      <div class="sec-head"><h2>Projects</h2><span class="eyebrow">03 — projects</span></div>
-
-      <div class="proj-grid">
-        <article class="proj wide">
-          <div class="proj-art">
-            <span class="proj-badge">Game</span>
-            <svg viewBox="0 0 900 315" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <rect width="900" height="315" fill="#0f0f10"/>
-              <rect width="900" height="315" fill="url(#g1)"/>
-              <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#151515"/><stop offset="1" stop-color="#090909"/></linearGradient></defs>
-              <!-- simple flat sprout mark, monochrome -->
-              <g transform="translate(450 188)" fill="none" stroke="#fafafa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M0 0 V-70"/>
-                <path d="M0 -50 C-40 -58 -52 -96 -16 -104 C-13 -74 -3 -62 0 -56"/>
-                <path d="M0 -38 C40 -46 52 -84 16 -92 C13 -62 3 -50 0 -46"/>
-              </g>
-              <ellipse cx="450" cy="196" rx="70" ry="16" fill="none" stroke="#2a2a2a" stroke-width="3"/>
-            </svg>
+    <!-- projects -->
+    <section class="section wrap" id="projects">
+      <div class="sec-head reveal"><span class="no">03</span><h2>Projects</h2></div>
+      <div class="pgrid">
+        <article class="pcell wide reveal">
+          <div class="part">
+            <span class="pbadge">Game</span>
+            <svg viewBox="0 0 900 315" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="900" height="315" fill="#060606"/><g transform="translate(450 194)" fill="none" stroke="#f1efe8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><path d="M0 0 V-74"/><path d="M0 -54 C-42 -62 -54 -100 -16 -108 C-13 -78 -3 -66 0 -60"/><path d="M0 -42 C42 -50 54 -88 16 -96 C13 -66 3 -54 0 -50"/></g><ellipse cx="450" cy="202" rx="74" ry="15" fill="none" stroke="#242422" stroke-width="3"/></svg>
           </div>
-          <div class="proj-body">
-            <span class="proj-kicker">Roblox · design &amp; scripting</span>
+          <div class="pbody">
+            <span class="pk">Roblox · design &amp; scripting</span>
             <h3>Steal and Grow A Seed</h3>
             <p>A competitive farming game where players grow rare seeds and try to swipe each other's harvest. I handled the game design, core gameplay scripting, and the economy / progression systems — from planting and growth timers to the steal mechanic and anti-grief rules.</p>
-            <div class="tags"><span class="tag">Roblox</span><span class="tag">Simulator</span><span class="tag">Luau</span><span class="tag">Game design</span><span class="tag">Economy</span></div>
+            <div class="ptags"><span>Roblox</span><span>Simulator</span><span>Luau</span><span>Game design</span><span>Economy</span></div>
           </div>
         </article>
 
-        <article class="proj">
-          <div class="proj-art">
-            <span class="proj-badge">Hub</span>
-            <svg viewBox="0 0 440 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <rect width="440" height="180" fill="#101010"/>
-              <text x="220" y="100" text-anchor="middle" fill="#fafafa" font-family="Inter Tight, sans-serif" font-size="30" font-weight="800" letter-spacing="-1">ThanHub</text>
-            </svg>
+        <article class="pcell reveal">
+          <div class="part">
+            <span class="pbadge">Hub</span>
+            <svg viewBox="0 0 440 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="440" height="220" fill="#060606"/><text x="220" y="124" text-anchor="middle" fill="#f1efe8" font-family="Anton, sans-serif" font-size="48" letter-spacing="1">LIYHUB</text></svg>
           </div>
-          <div class="proj-body">
-            <span class="proj-kicker">Loader &amp; protection</span>
-            <h3>ThanHub core</h3>
-            <p>The script loader, key system and anti-tamper pipeline behind ThanHub — opaque loader links, HWID locks and encrypted delivery.</p>
-            <div class="tags"><span class="tag">Luau</span><span class="tag">Node.js</span><span class="tag">DRM</span></div>
+          <div class="pbody">
+            <span class="pk">Loader &amp; protection</span>
+            <h3>LiyHub core</h3>
+            <p>The script hub, key system and store I built end to end — opaque loader links, HWID-locked keys, encrypted delivery and a QRIS store with automatic key fulfilment.</p>
+            <div class="ptags"><span>Luau</span><span>Node.js</span><span>DRM</span></div>
           </div>
         </article>
 
-        <article class="proj">
-          <div class="proj-art">
-            <span class="proj-badge">Script</span>
-            <svg viewBox="0 0 440 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-              <rect width="440" height="180" fill="#101010"/>
-              <g transform="translate(220 86)" fill="none" stroke-linecap="round">
-                <path d="M-80 24 Q-32 -46 12 10 T92 -24" stroke="#5a5a5a" stroke-width="6"/>
-                <circle cx="92" cy="-24" r="8" fill="#fafafa"/>
-              </g>
-              <text x="220" y="150" text-anchor="middle" fill="#6b6b6b" font-family="JetBrains Mono, monospace" font-size="13">#1 · Fisch</text>
-            </svg>
+        <article class="pcell reveal">
+          <div class="part">
+            <span class="pbadge">Script</span>
+            <svg viewBox="0 0 440 220" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect width="440" height="220" fill="#060606"/><g transform="translate(220 100)" fill="none" stroke-linecap="round"><path d="M-82 26 Q-32 -48 12 10 T94 -24" stroke="#4f4c45" stroke-width="6"/><circle cx="94" cy="-24" r="8" fill="#f1efe8"/></g><text x="220" y="178" text-anchor="middle" fill="#8e8b82" font-family="Space Mono, monospace" font-size="13">#1 / FISCH</text></svg>
           </div>
-          <div class="proj-body">
-            <span class="proj-kicker">Flagship script</span>
+          <div class="pbody">
+            <span class="pk">Flagship script</span>
             <h3>Fisch auto-suite</h3>
             <p>The #1 community-rated Fisch script: instant perfect catch, zero-delay shake solver and smart inventory, tuned to stay lag-free.</p>
-            <div class="tags"><span class="tag">Luau</span><span class="tag">Automation</span><span class="tag">Optimization</span></div>
+            <div class="ptags"><span>Luau</span><span>Automation</span><span>Optimization</span></div>
           </div>
         </article>
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="section">
+    <!-- contact -->
+    <section class="section wrap" id="contact">
       <div class="contact">
-        <div>
-          <h2>Work with Than</h2>
-          <p>Want to collaborate on a script hub, talk frameworks, or just connect? Discord is the fastest way to reach me.</p>
-        </div>
-        <button class="btn btn-solid" data-copy onclick="copyDiscord()"><span class="copy-label" data-default="Copy Discord @thanzxz">Copy Discord @thanzxz</span></button>
+        <span class="no reveal" style="font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)">04 / contact</span>
+        <h2 class="reveal" style="margin-top:18px">Let's build<br>something.</h2>
+        <p class="reveal">Want to collaborate on a script hub, talk frameworks, or just connect? Discord is the fastest way to reach me.</p>
+        <button class="btn solid reveal" data-copy onclick="copyDiscord()" style="padding:17px 32px"><span class="copy-label" data-default="Copy Discord @thanzxz">Copy Discord @thanzxz</span></button>
       </div>
     </section>
-
   </main>
 
   <footer>
-    <div class="wrap"><span>© 2026 Than (@thanzxz)</span><span>Roblox scripting developer</span></div>
+    <div class="f-in"><span>© 2026 Than / @thanzxz</span><span>Roblox scripting developer</span></div>
   </footer>
 
   <div id="toast" class="toast">Copied</div>
 
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
   <script>
-    function toggleMenu() {
-      const l = document.getElementById('navLinks');
-      const open = l.classList.toggle('active');
-      document.getElementById('menuToggle').setAttribute('aria-expanded', open);
-    }
-    function closeMenu() {
-      document.getElementById('navLinks').classList.remove('active');
-      document.getElementById('menuToggle').setAttribute('aria-expanded', 'false');
-    }
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---- segmented skill meters ----
+    document.querySelectorAll('.seg').forEach(s => {
+      const v = +s.dataset.v; let h = '';
+      for (let i = 0; i < 10; i++) h += '<i class="' + (i < v ? 'on' : '') + '"></i>';
+      s.innerHTML = h;
+    });
+
+    // ---- menu + copy ----
+    function toggleMenu() { document.getElementById('nav').classList.toggle('open'); }
+    function closeMenu() { document.getElementById('nav').classList.remove('open'); }
     function copyDiscord() {
       if (navigator.clipboard) navigator.clipboard.writeText('thanzxz').catch(() => {});
       const t = document.getElementById('toast');
-      t.classList.add('show');
-      clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 1800);
+      t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 1600);
       document.querySelectorAll('[data-copy] .copy-label').forEach(el => {
-        el.textContent = 'Copied';
-        clearTimeout(el._t2);
-        el._t2 = setTimeout(() => { el.textContent = el.dataset.default; }, 1800);
+        el.textContent = 'Copied'; clearTimeout(el._t2);
+        el._t2 = setTimeout(() => { el.textContent = el.dataset.default; }, 1600);
       });
+    }
+
+    // ---- reveal on scroll ----
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transitionDelay = ((i % 6) * 55) + 'ms';
+      io.observe(el);
+    });
+
+    // ---- Lenis smooth scroll ----
+    let lenis = null;
+    if (!reduce && typeof Lenis !== 'undefined') {
+      lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 1, smoothWheel: true });
+      function raf(t) { lenis.raf(t); requestAnimationFrame(raf); }
+      requestAnimationFrame(raf);
+      const bar = document.getElementById('progress');
+      const flare = document.getElementById('flare');
+      const nav = document.getElementById('nav');
+      lenis.on('scroll', ({ scroll, progress }) => {
+        bar.style.width = (progress * 100) + '%';
+        flare.style.transform = 'translateY(' + (scroll * 0.18) + 'px)';
+        nav.classList.toggle('scrolled', scroll > 30);
+      });
+    } else {
+      // fallback progress on native scroll
+      const bar = document.getElementById('progress');
+      const nav = document.getElementById('nav');
+      addEventListener('scroll', () => {
+        const h = document.documentElement;
+        bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+        nav.classList.toggle('scrolled', h.scrollTop > 30);
+      }, { passive: true });
+    }
+    // smooth anchor links
+    document.querySelectorAll('[data-link]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        if (!id || !id.startsWith('#')) return;
+        const el = document.querySelector(id);
+        if (!el) return;
+        e.preventDefault(); closeMenu();
+        if (lenis) lenis.scrollTo(el, { offset: id === '#top' ? 0 : -10 });
+        else el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+      });
+    });
+
+    // ---- drifting dust particles (monochrome ambiance) ----
+    if (!reduce) {
+      const c = document.getElementById('dust'), x = c.getContext('2d');
+      let w, h, parts;
+      function resize() {
+        w = c.width = innerWidth; h = c.height = innerHeight;
+        parts = Array.from({ length: Math.min(70, Math.floor(w / 22)) }, () => ({
+          x: Math.random() * w, y: Math.random() * h,
+          r: Math.random() * 1.5 + 0.3, s: Math.random() * 0.25 + 0.05,
+          o: Math.random() * 0.5 + 0.1, d: Math.random() * 6.28
+        }));
+      }
+      resize(); addEventListener('resize', resize);
+      (function loop() {
+        x.clearRect(0, 0, w, h);
+        for (const p of parts) {
+          p.y -= p.s; p.x += Math.sin(p.d += 0.005) * 0.12;
+          if (p.y < -5) { p.y = h + 5; p.x = Math.random() * w; }
+          x.beginPath(); x.arc(p.x, p.y, p.r, 0, 6.28);
+          x.fillStyle = 'rgba(241,239,232,' + p.o + ')'; x.fill();
+        }
+        requestAnimationFrame(loop);
+      })();
     }
   </script>
 </body>
